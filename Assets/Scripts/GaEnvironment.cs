@@ -5,6 +5,8 @@ using System;
 using System.IO;
 using System.Linq;
 using UnityEngine.UI;
+using System.Diagnostics; 
+using Debug = UnityEngine.Debug;
 
 public class GaEnvironment : Environment
 {
@@ -41,8 +43,10 @@ public class GaEnvironment : Environment
     private Queue<Gene> CurrentGenes { get; set; }
 
     [Header("Gene"),SerializeField] private GeneOperator Operator = null;
-
-    public  string path = "./Assets/data/test.csv";
+    
+    //DateTime dt;
+    //private string filename;
+    private string logpath ;
 
     // 個体オブジェクトと遺伝子を生成
     // 個体オブジェクトはNAgentsコだけ作って使いまわす
@@ -63,16 +67,11 @@ public class GaEnvironment : Environment
     void Start()
     {
         SetStartAgents();
-        if (!File.Exists(path))
-        {
-            // Create a file to write to.
-            using (StreamWriter sw = File.CreateText(path))
-            {
-                sw.WriteLine("Hello");
-                sw.WriteLine("And");
-                sw.WriteLine("Welcome");
-            }
-        }
+        DateTime dt = DateTime.Now;
+        string filename = dt.ToString("ddHHmm");
+        logpath = $"Assets/data/test_{filename}.csv";
+        Debug.Log(logpath);
+        File.WriteAllText(logpath, "generations, 最高距離, 平均\n");
     }
 
     // Agent,Geneを組としてAgentsSetにいれる
@@ -137,7 +136,9 @@ public class GaEnvironment : Environment
 
     private void SetNextGeneration() {
         AvgFitness = SumFitness / TotalPopulation;
-        File.AppendAllText(path, $"{Generation + 1}, {GenBestRecord}, {AvgFitness}, ");
+        Debug.Log(logpath);
+        //File.AppendAllText(logpath, "0");
+        File.AppendAllText(logpath, $"{Generation + 1}, {GenBestRecord}, {AvgFitness}\n");
         //new generation
         GenPopulation();
         SumFitness = 0;
