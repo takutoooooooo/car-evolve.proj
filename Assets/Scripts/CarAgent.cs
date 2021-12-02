@@ -101,7 +101,7 @@ public class CarAgent : Agent
         }
 
         // ゴール時に終了処理
-        if(DriveTime > 50) {
+        if(DriveTime > 100) {
             Controller.Stop();
             Done();
             AddFitness(MaxDistance);

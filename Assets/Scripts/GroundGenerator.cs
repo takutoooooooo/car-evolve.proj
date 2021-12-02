@@ -23,7 +23,7 @@ public class GroundGenerator : MonoBehaviour
     }
 
     private void MakeGroundData(){
-        System.Random rnd = new System.Random();
+        System.Random rnd = new System.Random(20);
         // 初期地点は固定
         float min_y = 0.0f;
         xpos.Add(0.0f);
