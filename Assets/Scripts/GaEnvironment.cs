@@ -47,6 +47,7 @@ public class GaEnvironment : Environment
     //DateTime dt;
     //private string filename;
     private string logpath ;
+    private GroundGenerator Ground;
 
     // 個体オブジェクトと遺伝子を生成
     // 個体オブジェクトはNAgentsコだけ作って使いまわす
@@ -67,9 +68,10 @@ public class GaEnvironment : Environment
     void Start()
     {
         SetStartAgents();
+        Ground = GameObject.Find("Grounds").GetComponent<GroundGenerator>();
         DateTime dt = DateTime.Now;
         string filename = dt.ToString("ddHHmm");
-        logpath = $"Assets/data/test_{filename}.csv";
+        logpath = $"Assets/data/ground_change/test_{filename}.csv";
         Debug.Log(logpath);
         File.WriteAllText(logpath, "generations, 最高距離, 平均\n");
     }
@@ -146,6 +148,8 @@ public class GaEnvironment : Environment
         Agents.ForEach(a => a.Reset());
         SetStartAgents();
         UpdateText();
+        Ground.MakeGroundData();
+        Ground.CreateMesh();
     }
 
     // 適応度で降順ソートするための関数

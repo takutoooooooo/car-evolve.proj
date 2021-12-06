@@ -22,10 +22,12 @@ public class GroundGenerator : MonoBehaviour
         CreateMesh();
     }
 
-    private void MakeGroundData(){
-        System.Random rnd = new System.Random(20);
+    public void MakeGroundData(){
+        System.Random rnd = new System.Random();
         // 初期地点は固定
         float min_y = 0.0f;
+        xpos.Clear();
+        ypos.Clear();
         xpos.Add(0.0f);
         xpos.Add(6.0f);
         ypos.Add(0.0f);
@@ -48,7 +50,7 @@ public class GroundGenerator : MonoBehaviour
         bottom = min_y - 3.0f;
     }
 
-    private void CreateMesh(){
+    public void CreateMesh(){
         int N = xpos.Count;
         int z = 2;
 
