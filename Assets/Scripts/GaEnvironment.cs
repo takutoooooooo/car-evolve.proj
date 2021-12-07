@@ -16,7 +16,7 @@ public class GaEnvironment : Environment
     [SerializeField] private int tournamentSelection = 85;
     private int TournamentSelection { get { return tournamentSelection; } }
 
-    [SerializeField] private int eliteSelection = 1;
+    [SerializeField] private int eliteSelection = 8;
     private int EliteSelection { get { return eliteSelection; } }
 
     [SerializeField] private int nAgents = 4;
@@ -48,6 +48,12 @@ public class GaEnvironment : Environment
     //private string filename;
     private string logpath ;
     private GroundGenerator Ground;
+
+    private List<Gene> BestGeneList = new List<Gene>();
+    private Queue<Gene> BestGens {get; set; }
+    private List<Agent> BestAgents { get; } = new List<Agent>();
+    private List<AgentPair> BestAgentsSet { get; } = new List<AgentPair>();
+
 
     // 個体オブジェクトと遺伝子を生成
     // 個体オブジェクトはNAgentsコだけ作って使いまわす
@@ -112,7 +118,27 @@ public class GaEnvironment : Environment
             }
             return p.agent.IsDone;
         });
+        if (Generation >= 2) {
+            UnityEditor.EditorApplication.isPaused = true;
+            // Debug.Log(string.Join(",", BestGeneList[0].data.Select(n => n.ToString())));
+            BestGens = new Queue<Gene>(BestGeneList);
+            for(int i = 0; i < 3; i++) {
+                var obj = Instantiate(GObjectAgent);
+                obj.SetActive(true);
+                GObjects.Add(obj);
+                BestAgents.Add(obj.GetComponent<Agent>());
+            }
+            for(var i = 0; i < 1; i++) {
+                var bestAgent = BestAgents;
+                var bestGene = BestGens.Dequeue();
+                bestAgent.ApplyGene(bestGene);
+                BestAgentsSet.Add(new AgentPair {
+                    agent = bestAgent,
+                    gene = bestGene
+                });
+            }
 
+        }
         if(CurrentGenes.Count == 0 && AgentsSet.Count == 0) {
             SetNextGeneration();
         }
@@ -138,8 +164,6 @@ public class GaEnvironment : Environment
 
     private void SetNextGeneration() {
         AvgFitness = SumFitness / TotalPopulation;
-        Debug.Log(logpath);
-        //File.AppendAllText(logpath, "0");
         File.AppendAllText(logpath, $"{Generation + 1}, {GenBestRecord}, {AvgFitness}\n");
         //new generation
         GenPopulation();
@@ -168,6 +192,9 @@ public class GaEnvironment : Environment
         bestGenes.Sort(CompareGenes);
         for(int i = 0; i < EliteSelection;i++){
             children.Add(Operator.Clone(bestGenes[i]));
+            // Debug.Log(string.Join(",", bestGenes[0].data.Select(n => n.ToString())));
+            BestGeneList.Add(Operator.Clone(bestGenes[0]));
+            // Debug.Log(string.Join(",", BestGeneList[0].data.Select(n => n.ToString())));
         }
         float mutate_only = 0.3f;
         // トーナメント選択 + 突然変異
