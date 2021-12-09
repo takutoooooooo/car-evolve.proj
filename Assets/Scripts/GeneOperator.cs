@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public abstract class GeneOperator : ScriptableObject
 { 
@@ -18,11 +19,15 @@ public abstract class GeneOperator : ScriptableObject
         var child_gene2 = new Gene();
         child_gene1.data = new List<float>(gene1.data);
         child_gene2.data = new List<float>(gene2.data);
+        var alpha = 0.2f;
         for(int i = 0;i < Length;i++){
-            if(Random.value < 0.5f){
-                child_gene1.data[i] = gene2.data[i];
-                child_gene2.data[i] = gene1.data[i];
-            }
+            var min_x = Math.Min(gene1.data[i], gene2.data[i]);
+            var max_x = Math.Max(gene1.data[i], gene2.data[i]);
+            var dx = max_x - min_x;
+            var min_cx = min_x - alpha * dx;
+            var max_cx = max_x + alpha * dx;
+            child_gene1.data[i] = UnityEngine.Random.Range(min_cx, max_cx);
+            child_gene2.data[i] = UnityEngine.Random.Range(min_cx, max_cx);
         }
         return (child_gene1,child_gene2);
     }

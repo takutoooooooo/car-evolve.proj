@@ -16,7 +16,7 @@ public class GaEnvironment : Environment
     [SerializeField] private int tournamentSelection = 85;
     private int TournamentSelection { get { return tournamentSelection; } }
 
-    [SerializeField] private int eliteSelection = 1;
+    [SerializeField] private int eliteSelection = 4;
     private int EliteSelection { get { return eliteSelection; } }
 
     [SerializeField] private int nAgents = 4;
@@ -71,7 +71,7 @@ public class GaEnvironment : Environment
         Ground = GameObject.Find("Grounds").GetComponent<GroundGenerator>();
         DateTime dt = DateTime.Now;
         string filename = dt.ToString("ddHHmm");
-        logpath = $"Assets/data/ground_change/test_{filename}.csv";
+        logpath = $"Assets/data/blx_alpha/test_{filename}.csv";
         Debug.Log(logpath);
         File.WriteAllText(logpath, "generations, 最高距離, 平均\n");
     }
