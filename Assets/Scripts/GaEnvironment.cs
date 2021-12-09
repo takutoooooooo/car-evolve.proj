@@ -16,8 +16,8 @@ public class GaEnvironment : Environment
     [SerializeField] private int tournamentSelection = 85;
     private int TournamentSelection { get { return tournamentSelection; } }
 
-    [SerializeField] private int eliteSelection = 1;
-    private int EliteSelection { get { return eliteSelection; } }
+    [SerializeField] private int eliteSelection_max = 16;
+    private int EliteSelection { get { return eliteSelection_max; } }
 
     [SerializeField] private int nAgents = 4;
     private int NAgents { get { return nAgents; } }
@@ -71,7 +71,7 @@ public class GaEnvironment : Environment
         Ground = GameObject.Find("Grounds").GetComponent<GroundGenerator>();
         DateTime dt = DateTime.Now;
         string filename = dt.ToString("ddHHmm");
-        logpath = $"Assets/data/ground_change/test_{filename}.csv";
+        logpath = $"Assets/data/elite_move/test_{filename}.csv";
         Debug.Log(logpath);
         File.WriteAllText(logpath, "generations, 最高距離, 平均\n");
     }
@@ -166,9 +166,19 @@ public class GaEnvironment : Environment
         var bestGenes = Genes.ToList();
         //Elite selection
         bestGenes.Sort(CompareGenes);
-        for(int i = 0; i < EliteSelection;i++){
-            children.Add(Operator.Clone(bestGenes[i]));
+        for(int i = 0; i < eliteSelection_max; i++){
+            if(bestGenes[i] == bestGenes[i+1]){
+                children.Add(Operator.Clone(bestGenes[i]));
+                Debug.Log(i);
+                break;
+            }
+            else{
+                children.Add(Operator.Clone(bestGenes[i]));
+            }
         }
+        /*for(int i = 0; i < eliteSelection_max;i++){
+            children.Add(Operator.Clone(bestGenes[i]));
+        }*/
         float mutate_only = 0.3f;
         // トーナメント選択 + 突然変異
         while(children.Count < TotalPopulation * mutate_only) {
