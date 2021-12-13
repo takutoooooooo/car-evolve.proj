@@ -16,8 +16,8 @@ public class GaEnvironment : Environment
     [SerializeField] private int tournamentSelection = 85;
     private int TournamentSelection { get { return tournamentSelection; } }
 
-    [SerializeField] private int eliteSelection_max = 16;
-    private int EliteSelection { get { return eliteSelection_max; } }
+    private int eliteSelection_max = 16;
+    private int EliteSelection_max { get { return eliteSelection_max; } }
 
     [SerializeField] private int nAgents = 4;
     private int NAgents { get { return nAgents; } }
@@ -49,6 +49,8 @@ public class GaEnvironment : Environment
     private string logpath ;
     private GroundGenerator Ground;
 
+    private int elite_num_per_gene;
+
     // 個体オブジェクトと遺伝子を生成
     // 個体オブジェクトはNAgentsコだけ作って使いまわす
     void Awake() {
@@ -73,7 +75,7 @@ public class GaEnvironment : Environment
         string filename = dt.ToString("ddHHmm");
         logpath = $"Assets/data/elite_move/test_{filename}.csv";
         Debug.Log(logpath);
-        File.WriteAllText(logpath, "generations, 最高距離, 平均\n");
+        File.WriteAllText(logpath, "generations, 最高距離, 平均,エリート数\n");
     }
 
     // Agent,Geneを組としてAgentsSetにいれる
@@ -140,9 +142,9 @@ public class GaEnvironment : Environment
         AvgFitness = SumFitness / TotalPopulation;
         Debug.Log(logpath);
         //File.AppendAllText(logpath, "0");
-        File.AppendAllText(logpath, $"{Generation + 1}, {GenBestRecord}, {AvgFitness}\n");
         //new generation
         GenPopulation();
+        File.AppendAllText(logpath, $"{Generation + 1}, {GenBestRecord}, {AvgFitness},{elite_num_per_gene}\n");
         SumFitness = 0;
         GenBestRecord = 0;
         Agents.ForEach(a => a.Reset());
@@ -166,14 +168,18 @@ public class GaEnvironment : Environment
         var bestGenes = Genes.ToList();
         //Elite selection
         bestGenes.Sort(CompareGenes);
-        for(int i = 0; i < eliteSelection_max; i++){
-            if(bestGenes[i] == bestGenes[i+1]){
+        elite_num_per_gene = 0;
+        for(int i = 0; i < EliteSelection_max; i++){
+            if((bestGenes[i].Fitness - bestGenes[i+1].Fitness) < 0.1){
                 children.Add(Operator.Clone(bestGenes[i]));
-                Debug.Log(i);
+                // Debug.Log(i);
+                elite_num_per_gene++;
                 break;
             }
             else{
                 children.Add(Operator.Clone(bestGenes[i]));
+                elite_num_per_gene++;
+                Debug.Log(elite_num_per_gene);
             }
         }
         /*for(int i = 0; i < eliteSelection_max;i++){
