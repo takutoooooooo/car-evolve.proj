@@ -16,7 +16,7 @@ public class GaEnvironment : Environment
     [SerializeField] private int tournamentSelection = 85;
     private int TournamentSelection { get { return tournamentSelection; } }
 
-    [SerializeField] private int eliteSelection = 1;
+    private int eliteSelection = 16;
     private int EliteSelection { get { return eliteSelection; } }
 
     [SerializeField] private int nAgents = 4;
