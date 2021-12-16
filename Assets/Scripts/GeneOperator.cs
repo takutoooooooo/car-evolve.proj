@@ -19,7 +19,7 @@ public abstract class GeneOperator : ScriptableObject
         var child_gene2 = new Gene();
         child_gene1.data = new List<float>(gene1.data);
         child_gene2.data = new List<float>(gene2.data);
-        var alpha = 0.2f;
+        var alpha = 0.3f;
         for(int i = 0;i < Length;i++){
             var min_x = Math.Min(gene1.data[i], gene2.data[i]);
             var max_x = Math.Max(gene1.data[i], gene2.data[i]);
